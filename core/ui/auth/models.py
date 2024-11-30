@@ -7,6 +7,13 @@ from typing import Union
 
 from pydantic import BaseModel, ConfigDict
 
+from fast_semaintic_ui.auth import AuthRedirect
+
+credentials_exception = AuthRedirect('/auth/login')
+
+class AuthData(BaseModel):
+    username: str
+    password: str
 
 class Token(BaseModel):
     access_token: str

@@ -7,27 +7,20 @@ from typing import Annotated, Union
 
 import jwt
 
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 
 from core.bases.stotage.models import Users
 from core.config import setting
-from core.ui.auth.models import TokenData, User
+from core.ui.auth.models import TokenData, User, credentials_exception
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
-credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
 
 
 def verify_password(plain_password, db_password):
     return Users.hash_md5(plain_password) == db_password.tobytes()
-
-
 
 
 def get_user(username: str) -> Union[Users, None]:
@@ -48,7 +41,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(days=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, setting.auth.secret_key, algorithm=setting.auth.algorithm)
     return encoded_jwt
