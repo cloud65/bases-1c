@@ -7,7 +7,7 @@ from uuid import UUID
 from fastapi import APIRouter, Query, Request, Response
 
 from core.bases.bases import Infobases
-from core.config import logger, setting
+from core.config import setting
 
 router = APIRouter(prefix=f'{setting.prefix}/WebCommonInfoBases')
 
@@ -27,6 +27,8 @@ async def check_infobases(
 ):
     response.headers["Cache-Control"] = "no-cache"
     result = {'root': {"InfoBasesChanged": True, 'URL': request.base_url}}
+    #headers = {'WWW-Authenticate': 'Basic'}
+    #return Response(status_code=status.HTTP_401_UNAUTHORIZED, headers=headers)
     return result
 
 
@@ -39,13 +41,12 @@ async def get_infobases(
 
 ):
     response.headers["Cache-Control"] = "no-cache"
-    ib = Infobases()
+    ib = Infobases(request.client.host)
     result = {
         'root': {
             "ClientID": client_id,
             "InfoBasesCheckCode": check_code,
-            'InfoBases': ib.get_list(request.client.host)
+            'InfoBases': ib.get_list()
         }
     }
-    logger.info('GetInfoBases')
     return result

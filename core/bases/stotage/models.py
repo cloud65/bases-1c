@@ -3,9 +3,10 @@
 Описание моделей
 """
 from enum import IntEnum
+from hashlib import md5
 from uuid import uuid4
 
-from peewee import Model, UUIDField, CharField, IntegerField
+from peewee import Model, UUIDField, CharField, IntegerField, BlobField, BooleanField
 
 
 class UserRight(IntEnum):
@@ -21,6 +22,23 @@ class Users(UUIDMixin):
     name = CharField(max_length=20, index=True)
     full_name = CharField(max_length=200, null=True)
     right = IntegerField(default=2, choices=UserRight)
+    password = BlobField(null=True)
+    disabled = BooleanField(default=False)
+
+    @classmethod
+    def set_admin(cls):
+        admin = cls.get_or_none(right=UserRight.ADMIN)
+        if admin is not None:
+            admin.delete_instance()
+        cls.create(
+            name='admin',
+            right=UserRight.ADMIN,
+            password=cls.hash_md5('admin')
+        )
+
+    @classmethod
+    def hash_md5(cls, value: str):
+        return md5(value.encode()).digest()
 
 
 class Groups(UUIDMixin):
@@ -43,4 +61,5 @@ def bind_models(db):
     models = [Users, Groups, Hosts, Infobases]
     for model in models:
         model.bind(db)
-        model.create_table()
+        db.migrate(db, model)
+    Users.set_admin()

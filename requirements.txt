@@ -1,3 +1,4 @@
 fastapi[standard]~=0.115.5
 peewee~=3.17.0
 psycopg2-binary~=2.9.0
+PyJWT~=2.10.1
