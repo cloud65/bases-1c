@@ -4,8 +4,7 @@ Routes
 """
 from datetime import timedelta
 
-
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from core.config import setting
 from core.ui.auth.core import create_access_token, authenticate_user
@@ -33,3 +32,10 @@ async def login_for_access_token(auth_data: AuthData) -> EventAuth:
 @router.get("/login", response_model=FastSemanticUI, response_model_exclude_none=True)
 async def get_page_login() -> list[AnyElement]:
     return page_login()
+
+
+@router.get("/logout", response_model=FastSemanticUI, response_model_exclude_none=True)
+async def user_logout(response: Response) -> EventAuth:
+    """Выход"""
+    response.headers["Clear-Site-Data"] = '"*"'
+    return EventAuth(url='/auth/login', token=False)
