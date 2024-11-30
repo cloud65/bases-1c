@@ -6,6 +6,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Query, Request, Response
 
+from core.bases.bases import Infobases
 from core.config import logger, setting
 
 router = APIRouter(prefix=f'{setting.prefix}/WebCommonInfoBases')
@@ -38,14 +39,12 @@ async def get_infobases(
 
 ):
     response.headers["Cache-Control"] = "no-cache"
-
-    print(request.client.host)
-    ib = '[___test]\nConnect=Srvr="192.168.13.47";Ref="backup";'
+    ib = Infobases()
     result = {
         'root': {
             "ClientID": client_id,
             "InfoBasesCheckCode": check_code,
-            'InfoBases': ib
+            'InfoBases': ib.get_list(request.client.host)
         }
     }
     logger.info('GetInfoBases')

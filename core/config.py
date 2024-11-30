@@ -10,12 +10,12 @@ class Database(BaseSettings):
     """
     Настройки БД
     """
-    model_config = SettingsConfigDict(env_prefix='PG')
+    model_config = SettingsConfigDict(env_prefix='PG_')
     host: str = 'localhost'
     port: int = '5432'
     user: str = 'postgres'
     password: str = ''
-    database: str = 'db'
+    name: str = 'db'
 
 
 class Setting(BaseSettings):
