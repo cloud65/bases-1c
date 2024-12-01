@@ -36,6 +36,7 @@ class Setting(BaseSettings):
     static: str = './core/static'
     log: str = 'info'
     prefix: str = '/bases'
+    version: str = '0.0.1'
 
 
 setting = Setting()
