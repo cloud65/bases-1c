@@ -4,8 +4,11 @@
 """
 from typing import Any, List
 
+from pydantic import Field
+
 from core.config import setting
 from core.ui.auth.models import User
+from core.ui.menu.submenu import SettingMenu
 from fast_semaintic_ui.event import EventSystem
 from fast_semaintic_ui.elements import Value
 from fast_semaintic_ui.event_sys import Favicon
@@ -63,7 +66,7 @@ class UsernameItem(Segment):
 class LogoutItem(MenuItem):
     children: List[Any] = [Icon(name='sign out'), Text('Выход')]
     position: PositionEnum = PositionEnum.right
-    onClick: EventGoto = EventGoto(url='/auth/logout')
+    onClick: EventGoto = Field(EventGoto(url='/auth/logout'), serialization_alias='onClick')
 
 
 class TopMenu(Menu):
@@ -77,9 +80,20 @@ class LeftMenu(Menu):
     vertical: bool = True
     inverted: bool = True
     style: dict = {'borderRadius': 0, 'marginTop': '3em', 'marginBottom': 0}
-    children: List[Any] = [AppVersion()]
+    children: List[Any] = [SettingMenu(), AppVersion()]
+
+
+class Content(Segment):
+    basic: bool = True
+    style: dict = {'display': 'flex', 'padding': 0,
+                   'marginTop': '3em', 'flex': 1}
+    children: List[Any] = [Div(id='content')]
 
 
 class Window(Div):
     style: dict = {'display': 'flex', 'height': '100vh'}
-    children: List[Any] = [TopMenu(), LeftMenu()]
+    children: List[Any] = [TopMenu(), LeftMenu(), Content()]
+
+    def __init__(self, content):
+        super().__init__()
+        self.children[2].children[0].add(content)
