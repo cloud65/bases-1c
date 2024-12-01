@@ -1,10 +1,35 @@
 # pylint: disable=line-too-long
 """Формы для авторизации"""
-from fast_semaintic_ui import FormInput, FormButton, ColorEnum, SizeEnum, TextAlignEnum, EventSubmit, Form, Segment, \
-    GridColumn, Grid, VerticalAlignEnum, EventData
+from typing import List
+
+from fast_semaintic_ui.grid import GridColumn, Grid
+from fast_semaintic_ui.enums import VerticalAlignEnum, ColorEnum, SizeEnum, TextAlignEnum
+from fast_semaintic_ui.segment import Segment
+from fast_semaintic_ui.event import EventSubmit, EventData
+from fast_semaintic_ui.button import FormButton
+from fast_semaintic_ui.form import Form, FormInput
 from fast_semaintic_ui.elements import Value
+from fast_semaintic_ui.event_sys import Favicon, EventSystem
 from fast_semaintic_ui.header import Header
 from fast_semaintic_ui.types import AnyElement
+
+
+def get_system_data():
+    """Возвращает настройки приложения для EventData"""
+    icon = Favicon(url="/api/auth/img/auth.png")
+    return EventSystem(
+        title='Авторизация',
+        lang='ru',
+        icon=icon,
+        style={'overflow': 'hidden'}
+    )
+
+
+class AuthSubmit(EventSubmit):
+    """Авторизация"""
+    url: str = '/auth/token'
+    name: List[str] = ['auth']
+    loading: str = 'loading_form'
 
 
 def page_login() -> list[AnyElement]:
@@ -19,7 +44,7 @@ def page_login() -> list[AnyElement]:
         color=ColorEnum.teal, fluid=True, size=SizeEnum.large,
         content='Авторизация', icon='key', disabled=Value('login.disabled')
     )
-    button.on_click = EventSubmit(url='/auth/token', name=['auth'], loading='loading_form')
+    button.on_click = AuthSubmit()
 
     header = Header(h='h2', color=ColorEnum.blue, text_align=TextAlignEnum.center)
     header.text = 'Авторизация'
@@ -33,4 +58,4 @@ def page_login() -> list[AnyElement]:
     grid = Grid(text_align=TextAlignEnum.center, vertical_align=VerticalAlignEnum.middle)
     grid.style = {'height': '100vh'}
     grid.add(column)
-    return [grid, EventData(data={'login.disabled': False})]
+    return [grid, get_system_data(), EventData(data={'login.disabled': False})]

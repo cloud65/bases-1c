@@ -5,6 +5,7 @@ Routes
 from datetime import timedelta
 
 from fastapi import APIRouter, Response
+from fastapi.responses import FileResponse
 
 from core.config import setting
 from core.ui.auth.core import create_access_token, authenticate_user
@@ -15,6 +16,12 @@ from fast_semaintic_ui.auth import AuthError
 from fast_semaintic_ui.types import AnyElement
 
 router = APIRouter(prefix='/auth')
+
+
+@router.get("/img/{name}")
+async def get_favicon(name: str):
+    """Получение изображений"""
+    return FileResponse(f'core/ui/auth/{name}')
 
 
 @router.post("/token", response_model=FastSemanticUI, response_model_exclude_none=True)
