@@ -87,7 +87,9 @@ class Content(Segment):
     basic: bool = True
     style: dict = {'display': 'flex', 'padding': 0,
                    'marginTop': '3em', 'flex': 1}
-    children: List[Any] = [Div(id='content')]
+    children: List[Any] = [
+        Div(id='content', style={'display': 'flex', 'flex': 1, 'margin': '2px'})
+    ]
 
 
 class Window(Div):

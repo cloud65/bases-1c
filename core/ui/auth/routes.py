@@ -35,7 +35,7 @@ async def login_for_access_token(auth_data: AuthData) -> EventAuth:
     user = authenticate_user(auth_data.username, auth_data.password)
     if not user:
         raise AuthError(message='Неверный логин или пароль', code='auth')
-    access_token_expires = timedelta(minutes=setting.auth.token_expire)
+    access_token_expires = timedelta(days=setting.auth.token_expire)
     access_token = create_access_token(
         data={"sub": user.name}, expires_delta=access_token_expires
     )
