@@ -18,7 +18,6 @@ from core.ui.auth.models import TokenData, User, credentials_exception
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 
-
 def verify_password(plain_password, db_password):
     return Users.hash_md5(plain_password) == db_password.tobytes()
 
